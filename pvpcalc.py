@@ -24,7 +24,6 @@ except:
 # agregar titulo de la ventana
 root.title("P.V.P. Calc.")
 
-
 # crear la base de datos y la tabla de configuraciones
 try:
     db = sqlite3.connect('dbpvp')
@@ -53,7 +52,6 @@ except sqlite3.OperationalError:
     #messagebox.showwarning('Conexion', 'La base de datos ya existe.')
     pass
         
-    
 # carga los datos de configuracion
 def load_percent():
     db = sqlite3.connect('dbpvp')
@@ -74,7 +72,6 @@ def load_percent():
     }
     return config
 
-
 # variables body
 iva        = IntVar()
 req        = IntVar()
@@ -92,8 +89,6 @@ friendly_price  = IntVar()
 reduce_discount = IntVar()
 config = load_percent()
 
-
-
 # Recargar los datos necesarios
 def refresh():
     global config
@@ -104,7 +99,6 @@ def refresh():
     iva_value.set(config['iva'])
     req_value.set(config['req'])
     calculate(input)
-    
     
 # actualizar los datos de la db
 def update_percent():
@@ -120,10 +114,70 @@ def update_percent():
     db.close()
     refresh()
     show_body()
-    
 
+# Devuelve un valor mas amigable para los clientes    
+def make_friendly_price(input):
+     # redondear precios hast 3.99
+    if input <= 0.5:
+        price = 0.5
+    elif input >= 0.51 and input <= 0.65:
+        price = 0.65
+    elif input >= 0.66 and input <= 0.75:
+        price = 0.75
+    elif input >= 0.76 and input <= 0.85:
+        price = 0.85
+    elif input >= 0.86 and input <= 0.9:
+        price = 0.9
+    elif input >= 0.91 and input <= 1:
+        price = 1
+    elif input >= 1.01 and input <= 1.1:
+        price = 1.1
+    elif input >= 1.11 and input <= 1.2:
+        price = 1.2
+    elif input >= 1.21 and input <= 1.25:
+        price = 1.25
+    elif input >= 1.26 and input <= 1.35:
+        price = 1.35
+    elif input >= 1.36 and input <= 1.5:
+        price = 1.5
+    elif input >= 1.51 and input <= 1.76:
+        price = 1.75
+    elif input >= 1.77 and input <= 2:
+        price = 2
+    elif input >= 2.01 and input <= 2.25:
+        price = 2.25
+    elif input >= 2.26 and input <= 2.5:
+        price = 2.5
+    elif input >= 2.51 and input <= 2.75:
+        price = 2.75
+    elif input >= 2.76 and input <= 2.99:
+        price = 2.95
+    elif input >= 3 and input <= 3.15:
+        price = 3.15
+    elif input >= 3.16 and input <= 3.35:
+        price = 3.35
+    elif input >= 3.36 and input <= 3.5:
+        price = 3.5
+    elif input >= 3.51 and input <= 3.75:
+        price = 3.75
+    elif input >= 3.76 and input <= 3.99:
+        price = 3.95
+    elif input >= 4:
+        # ajusta los precios mayores de 4 
+        differ, int_input = modf(input)
+        differ = round(differ, 2)
+        if differ <= 0.16 or differ == 1:
+            price = int_input - 0.05
+        elif differ >= 0.17 and differ <= 0.51:
+            price = int_input + 0.5
+        elif differ >= 0.52 and differ <= 0.76:
+            price = int_input + 0.75
+        elif differ >= 0.77 and differ <= 0.99:
+            price = int_input + 0.95
+    return price
+
+# hace las operaciones matematicas    
 def calculate(input):
-    
     global config
     
     if input.isdigit() or '.' in input:
@@ -152,91 +206,34 @@ def calculate(input):
                 input = input + (input * (config['req'] / 100))
             
             discount_in_discounted = input * (config['discount_in'] / 100)
+            
             price_cost_discounted = input - discount_in_discounted
             
             # quitar el descuento de entrada
             if config['reduce_discount'] == 1:
-                input = input - discount_in_discounted
-            
-            # imprimir precio coste
-            price_cost.set(f"{price_cost_discounted:.2f}")   
+                input = input - discount_in_discounted  
             
             # calcular el precio de venta    
             input = round(input + (input * (config['profit'] / 100)), config['max_float'])
             
             # redondear el importe a sumas mas amigables
             if config['friendly_price'] == 1:
-                
-                # redondear precios hast 3.99
-                if input <= 0.5:
-                    price = 0.5
-                elif input >= 0.51 and input <= 0.65:
-                    price = 0.65
-                elif input >= 0.66 and input <= 0.75:
-                    price = 0.75
-                elif input >= 0.76 and input <= 0.85:
-                    price = 0.85
-                elif input >= 0.86 and input <= 0.9:
-                    price = 0.9
-                elif input >= 0.91 and input <= 1:
-                    price = 1
-                elif input >= 1.01 and input <= 1.1:
-                    price = 1.1
-                elif input >= 1.11 and input <= 1.2:
-                    price = 1.2
-                elif input >= 1.21 and input <= 1.25:
-                    price = 1.25
-                elif input >= 1.26 and input <= 1.35:
-                    price = 1.35
-                elif input >= 1.36 and input <= 1.5:
-                    price = 1.5
-                elif input >= 1.51 and input <= 1.76:
-                    price = 1.75
-                elif input >= 1.77 and input <= 2:
-                    price = 2
-                elif input >= 2.01 and input <= 2.25:
-                    price = 2.25
-                elif input >= 2.26 and input <= 2.5:
-                    price = 2.5
-                elif input >= 2.51 and input <= 2.75:
-                    price = 2.75
-                elif input >= 2.76 and input <= 2.99:
-                    price = 2.95
-                elif input >= 3 and input <= 3.15:
-                    price = 3.15
-                elif input >= 3.16 and input <= 3.35:
-                    price = 3.35
-                elif input >= 3.36 and input <= 3.5:
-                    price = 3.5
-                elif input >= 3.51 and input <= 3.75:
-                    price = 3.75
-                elif input >= 3.76 and input <= 3.99:
-                    price = 3.95
-                elif input >= 4:
-                    
-                    # ajusta los precios mayores de 4 
-                    differ, int_input = modf(input)
-                    differ = round(differ, 2)
-                    
-                    if differ <= 0.16 or differ == 1:
-                        price = int_input - 0.05
-                    elif differ >= 0.17 and differ <= 0.51:
-                        price = int_input + 0.5
-                    elif differ >= 0.52 and differ <= 0.76:
-                        price = int_input + 0.75
-                    elif differ >= 0.77 and differ <= 0.99:
-                        price = int_input + 0.95
+                price = make_friendly_price(input)
             else:
+                # precio tal qual resulta
                 price = input
-                
+            
+            # imprime los resultados
+            price_cost.set(f"{price_cost_discounted:.2f}")     
             discount = price - ((price / 100 ) * config['discount_out'])     
             label_result.config(text=f"{price:.2f}")
             label_discount.config(text=f"{discount:.2f}")
             return True
         except:
+            # no se puede calcular
             return False
 
-    # acceptar teclas de borrado    
+    # aceptar teclas de borrado    
     elif input == '':
         label_result.config(text='0.00')
         label_discount.config(text='0.00')
@@ -249,8 +246,7 @@ def calculate(input):
         
 # mostrar el msg de licencia    
 def show_license():
-    #info = Toplevel()
-    messagebox.showwarning('Info.', 'Advertencia! licencia bajo GNU 2021')
+    messagebox.showwarning('Info', 'Copyright (c) 2021 dragos2yo, Licencia MIT \nhttps://github.com/dragos2yo/pvpcalc/LICENSE.md')
     
 # mostrar informacion de la aplicacion    
 def show_about():
@@ -258,7 +254,7 @@ def show_about():
     
 # salir de la aplicacion    
 def exit_app():
-    question = messagebox.askokcancel('Salir', 'Seguro que desea salir?')
+    question = messagebox.askokcancel('Salir', '¿Seguro que desea salir?')
     if question == True:
         root.destroy()
 
