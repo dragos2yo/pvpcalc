@@ -250,7 +250,7 @@ def show_license():
     
 # mostrar informacion de la aplicacion    
 def show_about():
-    messagebox.showinfo('P.V.P Calc.', 'Calculadora de P.V.P. version 1.0')
+    messagebox.showinfo('PVP Calc.', 'Calculadora de PVP, version 1.0')
     
 # salir de la aplicacion    
 def exit_app():
@@ -324,7 +324,7 @@ label_result = Label(body, text='0.00', font=('Helvetica', 38, BOLD), fg='black'
 label_result.grid(row=3, column=0, padx=10, pady=10, columnspan=2, sticky='wes')
 
 # campo precio con el descuento 
-label_discount = Label(body, text='0.00', font=('Helvetica', 12, BOLD), fg='green', bg='white',)
+label_discount = Label(body, text='0.00', font=('Helvetica', 12, BOLD), fg='green', bg='white')
 label_discount.grid(row=3, column=0, padx=10, pady=10, sticky='wn')
 
 # cuerpo de ajustes
